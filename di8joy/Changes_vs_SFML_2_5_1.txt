@@ -1,0 +1,20 @@
+author: Daniel Hug 2022
+
+Code for di8joy copied from the joystick part of the SFML library (V 2.5.1)
+and adjusted to my specific needs.
+
+All credits for the original implementation go to the original authors.
+
+My modifications vs. SFML V2.5.1 are:
+
+- Axis enumeration changed to (X,Y,Z,Rx,Ry,Rz,S0,S1) vs. (X,Y,Z,R,U,V,PovX,PovY)
+- 128 virtual buttons supported for all joysticks (vs. 32)
+- POV hats are not mapped to an axis but provided as separate output (vs. 1 POV mapped to slider axes)
+- use std::wstring instead of sf::String
+- requires direct input 8 (fallback mode removed); 
+  the implementation is for the windows platform (WIN32) exclusively
+
+
+under consideration:
+  - POV hats are additionally mapped to virtual buttons instead of to a virtual axis
+  (above physical buttons as long as free virtual buttons are still available)
