@@ -34,3 +34,8 @@
 # directories
 build/
 .vscode/
+
+#
+*.vcxproj
+*.vcxproj.filters
+
