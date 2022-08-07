@@ -86,62 +86,62 @@ std::ostream &err();
 namespace priv
 {
 
-struct JoystickCaps
+struct jsCaps
 {
-    unsigned int buttonCount{0};      // actual number of buttons supported by the joystick (max. 128)
-    unsigned int povCount{0};         // actual number of pov hats (max. 4)
-    bool axes[Joystick::AxisCount]{}; // support for each axis (max. 8)
+    unsigned int nButton{0};    // actual number of buttons supported by the joystick (max. 128)
+    unsigned int nPOV{0};       // actual number of pov hats (max. 4)
+    bool axes[js::max_nAxis]{}; // support for each axis (max. 8)
 };
 
-struct JoystickState
+struct jsState
 {
-    bool connected{false};                 // Is the joystick currently connected?
-    float axes[Joystick::AxisCount]{};     // Position of each axis, in range [-100.f, 100.f]
-    int povs[Joystick::PovCount]{};        // Position of each pov hat (-1 for center pos, otherwise in deg starting from top with 0 in counter clockwise direction):
-                                           // center: -1, up: 0, U/R: 45, R: 90, D/R: 135, D: 180, D/L: 225, L: 270, U/L: 315
-    bool buttons[Joystick::ButtonCount]{}; // Status of each button (true = pressed)
+    bool connected{false};           // Is the joystick currently connected?
+    float axes[js::max_nAxis]{};     // Position of each axis, in range [-100.f, 100.f]
+    int povs[js::max_nPOV]{};        // Position of each pov hat (-1 for center pos, otherwise in deg starting from top with 0 in counter clockwise direction):
+                                     // center: -1, up: 0, U/R: 45, R: 90, D/R: 135, D: 180, D/L: 225, L: 270, U/L: 315
+    bool buttons[js::max_nButton]{}; // Status of each button (true = pressed)
 };
 
-class JoystickImpl
+class jsImpl
 {
   public:
     static void initialize(); // global initialization
 
     static void cleanup(); // global cleanup
 
-    static bool isConnected(unsigned int index);
+    static bool isConnected(unsigned int jsIdx);
 
     static void setLazyUpdates(bool status); // enable lazy update based on windows triggered enumeration updates
 
     static void updateConnections(); // Update the connection status of all joysticks
 
-    [[nodiscard]] bool open(unsigned int index); // open joystick for reading status updates
+    [[nodiscard]] bool open(unsigned int jsIdx); // open joystick for reading status updates
 
     void close();
 
-    JoystickCaps getCapabilities() const;
+    jsCaps getCapabilities() const;
 
-    Joystick::Identification getIdentification() const;
+    js::Id getId() const;
 
-    [[nodiscard]] JoystickState update();
+    [[nodiscard]] jsState update();
 
     static void initializeDInput(); // global direct input initialization
 
     static void cleanupDInput(); // global cleanup of direct input
 
-    static bool isConnectedDInput(unsigned int index);
+    static bool isConnectedDInput(unsigned int jsIdx);
 
     static void updateConnectionsDInput();
 
-    [[nodiscard]] bool openDInput(unsigned int index);
+    [[nodiscard]] bool openDInput(unsigned int jsIdx);
 
     void closeDInput();
 
-    JoystickCaps getCapabilitiesDInput() const;
+    jsCaps getCapabilitiesDInput() const;
 
-    [[nodiscard]] JoystickState updateDInputBuffered();
+    [[nodiscard]] jsState updateDInputBuffered();
 
-    [[nodiscard]] JoystickState updateDInputPolled();
+    [[nodiscard]] jsState updateDInputPolled();
 
   private:
     static BOOL CALLBACK deviceEnumerationCallback(const DIDEVICEINSTANCE *deviceInstance, void *userData);
@@ -150,15 +150,15 @@ class JoystickImpl
 
     // Member data
 
-    unsigned int m_index;                      // Index of the joystick
-    IDirectInputDevice8W *m_device;            // DirectInput 8.x device
-    DIDEVCAPS m_deviceCaps;                    // DirectInput device capabilities
-    int m_axes[Joystick::AxisCount];           // Offsets to the bytes containing the axes states, -1 if not available
-    int m_povs[Joystick::PovCount];            // Offsets to the bytes containing the pov states, -1 if not available
-    int m_buttons[Joystick::ButtonCount];      // Offsets to the bytes containing the button states, -1 if not available
-    Joystick::Identification m_identification; // Joystick identification
-    JoystickState m_state;                     // Buffered joystick state
-    bool m_buffered;                           // true if the device uses buffering, false if the device uses polling
+    unsigned int m_index;           // Index of the joystick
+    IDirectInputDevice8W *m_device; // DirectInput 8.x device
+    DIDEVCAPS m_deviceCaps;         // DirectInput device capabilities
+    int m_axes[js::max_nAxis];      // Offsets to the bytes containing the axes states, -1 if not available
+    int m_povs[js::max_nPOV];       // Offsets to the bytes containing the pov states, -1 if not available
+    int m_buttons[js::max_nButton]; // Offsets to the bytes containing the button states, -1 if not available
+    js::Id m_identification;        // Joystick identification
+    jsState m_state;                // Buffered joystick state
+    bool m_buffered;                // true if the device uses buffering, false if the device uses polling
 };
 
 } // namespace priv

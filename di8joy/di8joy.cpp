@@ -44,65 +44,59 @@
 namespace hd
 {
 
-bool Joystick::isConnected(unsigned int joystick)
+bool js::isConnected(unsigned int jsIdx)
 {
-    assert(joystick < Joystick::Count);
-    return priv::JoystickMngr::getInstance().getState(joystick).connected;
+    assert(jsIdx < js::max_nJoystick);
+    return priv::jsMngr::getInstance().getState(jsIdx).connected;
 }
 
-unsigned int Joystick::getButtonCount(unsigned int joystick)
+unsigned int js::getButtonCount(unsigned int jsIdx)
 {
-    assert(joystick < Joystick::Count);
-    return priv::JoystickMngr::getInstance().getCapabilities(joystick).buttonCount;
+    assert(jsIdx < js::max_nJoystick);
+    return priv::jsMngr::getInstance().getCapabilities(jsIdx).nButton;
 }
 
-unsigned int Joystick::getPovCount(unsigned int joystick)
+unsigned int js::getPovCount(unsigned int jsIdx)
 {
-    assert(joystick < Joystick::Count);
-    return priv::JoystickMngr::getInstance().getCapabilities(joystick).povCount;
+    assert(jsIdx < js::max_nJoystick);
+    return priv::jsMngr::getInstance().getCapabilities(jsIdx).nPOV;
 }
 
-bool Joystick::hasAxis(unsigned int joystick, Axis axis)
+bool js::hasAxis(unsigned int jsIdx, Axis axisIdx)
 {
-    assert(joystick < Joystick::Count);
-    return priv::JoystickMngr::getInstance().getCapabilities(joystick).axes[axis];
+    assert(jsIdx < js::max_nJoystick);
+    return priv::jsMngr::getInstance().getCapabilities(jsIdx).axes[axisIdx];
 }
 
-bool Joystick::isButtonPressed(unsigned int joystick, unsigned int button)
+bool js::isButtonPressed(unsigned int jsIdx, unsigned int buttonIdx)
 {
-    assert(joystick < Joystick::Count);
-    assert(button < Joystick::ButtonCount);
-    return priv::JoystickMngr::getInstance().getState(joystick).buttons[button];
+    assert(jsIdx < js::max_nJoystick);
+    assert(buttonIdx < js::max_nButton);
+    return priv::jsMngr::getInstance().getState(jsIdx).buttons[buttonIdx];
 }
 
-int Joystick::getPovPosition(unsigned int joystick, unsigned int pov)
+int js::getPovPosition(unsigned int jsIdx, unsigned int povIdx)
 {
-    assert(joystick < Joystick::Count);
-    assert(pov < Joystick::PovCount);
-    return priv::JoystickMngr::getInstance().getState(joystick).povs[pov];
+    assert(jsIdx < js::max_nJoystick);
+    assert(povIdx < js::max_nPOV);
+    return priv::jsMngr::getInstance().getState(jsIdx).povs[povIdx];
 }
 
-float Joystick::getAxisPosition(unsigned int joystick, Axis axis)
+float js::getAxisPosition(unsigned int jsIdx, Axis axisIdx)
 {
-    assert(joystick < Joystick::Count);
-    return priv::JoystickMngr::getInstance().getState(joystick).axes[axis];
+    assert(jsIdx < js::max_nJoystick);
+    return priv::jsMngr::getInstance().getState(jsIdx).axes[axisIdx];
 }
 
-Joystick::Identification Joystick::getIdentification(unsigned int joystick)
+js::Id js::getId(unsigned int jsIdx)
 {
-    assert(joystick < Joystick::Count);
-    return priv::JoystickMngr::getInstance().getIdentification(joystick);
+    assert(jsIdx < js::max_nJoystick);
+    return priv::jsMngr::getInstance().getId(jsIdx);
 }
 
-void Joystick::update()
+void js::update()
 {
-    return priv::JoystickMngr::getInstance().update();
-}
-
-Joystick::Identification::Identification() : name{L"No Joystick"},
-                                             vendorId{0},
-                                             productId{0}
-{
+    return priv::jsMngr::getInstance().update();
 }
 
 } // namespace hd

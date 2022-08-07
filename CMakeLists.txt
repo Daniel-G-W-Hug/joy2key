@@ -6,7 +6,7 @@ project(
   LANGUAGES CXX)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 # set a default build type: Debug | RelWithDebInfo | Release | MinSizeRel
@@ -25,6 +25,8 @@ if(CMAKE_BUILD_TYPE EQUAL "Debug")
   endif()
 endif()
 
-add_subdirectory(di8joy)    # Direct Input 8 library for joystick & buttons
-add_subdirectory(joy2cmdl)  # joy2cmdl - inital version for comand line output
-add_subdirectory(joy2key)   # joy2key main window
+
+add_subdirectory(di8joy_class)    # simple class for Direct Input 8 for joystick & buttons
+add_subdirectory(di8joy)          # Direct Input 8 library for joystick & buttons
+add_subdirectory(joy2cmdl)        # joy2cmdl - inital version for command line output
+add_subdirectory(joy2key)         # joy2key main window

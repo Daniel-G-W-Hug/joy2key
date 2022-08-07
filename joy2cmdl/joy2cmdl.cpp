@@ -2,9 +2,15 @@
 #include "string_trim.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>
+
+#include <windows.h>
+
+using namespace std::chrono;
 
 int main()
 {
@@ -13,14 +19,15 @@ int main()
     std::cout << "\nGet info on connected joysticks:\n";
 
     // update must be called once to initialize the joystick library ldi8joy
-    hd::Joystick::update();
+    hd::js::update();
 
     int num_sticks{0};
-    hd::Joystick::Identification id[hd::Joystick::Count]; // storage for hd::Joystick::Count joysticks
+    hd::js::Id id[hd::js::max_nJoystick]; // storage for hd::Joystick::Count joysticks
 
-    for (int i = 0; i < hd::Joystick::Count; ++i)
+    for (int i = 0; i < hd::js::max_nJoystick; ++i)
     {
-        id[i] = hd::Joystick::getIdentification(i);
+        //std::cout << "\n\ni = " << i << ":\n";
+        id[i] = hd::js::getId(i);
         if (id[i].vendorId != 0)
         {
             ++num_sticks;
@@ -34,56 +41,56 @@ int main()
             std::cout << "Product ID: " << id[i].productId << std::endl;
 
             //query joystick for settings if it's plugged in...
-            if (hd::Joystick::isConnected(i))
+            if (hd::js::isConnected(i))
             {
                 // check how many buttons joystick number 0 has
-                unsigned int buttonCount = hd::Joystick::getButtonCount(i);
-                unsigned int povCount = hd::Joystick::getPovCount(i);
+                unsigned int nButton = hd::js::getButtonCount(i);
+                unsigned int nPOV = hd::js::getPovCount(i);
 
                 // check if joystick number 0 has a Z axis
-                bool hasZ = hd::Joystick::hasAxis(i, hd::Joystick::Z);
+                bool hasZ = hd::js::hasAxis(i, hd::js::Z);
 
-                std::cout << "Button count: " << buttonCount << std::endl;
-                std::cout << "Pov count: " << povCount << std::endl;
+                std::cout << "Button count: " << nButton << std::endl;
+                std::cout << "Pov count: " << nPOV << std::endl;
 
                 int numAxes{0};
                 std::string nameAxes{};
-                if (hd::Joystick::hasAxis(i, hd::Joystick::X))
+                if (hd::js::hasAxis(i, hd::js::X))
                 {
                     ++numAxes;
                     nameAxes += " X";
                 }
-                if (hd::Joystick::hasAxis(i, hd::Joystick::Y))
+                if (hd::js::hasAxis(i, hd::js::Y))
                 {
                     ++numAxes;
                     nameAxes += " Y";
                 }
-                if (hd::Joystick::hasAxis(i, hd::Joystick::Z))
+                if (hd::js::hasAxis(i, hd::js::Z))
                 {
                     ++numAxes;
                     nameAxes += " Z";
                 }
-                if (hd::Joystick::hasAxis(i, hd::Joystick::Rx))
+                if (hd::js::hasAxis(i, hd::js::Rx))
                 {
                     ++numAxes;
                     nameAxes += " Rx";
                 }
-                if (hd::Joystick::hasAxis(i, hd::Joystick::Ry))
+                if (hd::js::hasAxis(i, hd::js::Ry))
                 {
                     ++numAxes;
                     nameAxes += " Ry";
                 }
-                if (hd::Joystick::hasAxis(i, hd::Joystick::Rz))
+                if (hd::js::hasAxis(i, hd::js::Rz))
                 {
                     ++numAxes;
                     nameAxes += " Rz";
                 }
-                if (hd::Joystick::hasAxis(i, hd::Joystick::S0))
+                if (hd::js::hasAxis(i, hd::js::S0))
                 {
                     ++numAxes;
                     nameAxes += " S0";
                 }
-                if (hd::Joystick::hasAxis(i, hd::Joystick::S1))
+                if (hd::js::hasAxis(i, hd::js::S1))
                 {
                     ++numAxes;
                     nameAxes += " S1";
@@ -99,20 +106,50 @@ int main()
 
     std::cout << "\nTotal number of connected joysticks: " << num_sticks << "\n\n";
 
-    for (unsigned int i = 0; i < hd::Joystick::Count; ++i)
+    std::cout << "Press ESC to stop...\n"
+              << std::endl;
+
+    // get console information
+    CONSOLE_SCREEN_BUFFER_INFO coninfo;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(hConsole, &coninfo); // get current console position
+
+    while (true)
     {
-        if (hd::Joystick::isConnected(i))
+
+        for (unsigned int i = 0; i < hd::js::max_nJoystick; ++i)
         {
-            hd::Joystick::update();
-            std::cout << "Joystick " << i << ": ";
-            std::string outstr{};
-            for (unsigned int j = 0; j < hd::Joystick::getButtonCount(i); ++j)
+            if (hd::js::isConnected(i))
             {
-                outstr += (hd::Joystick::isButtonPressed(i, j)) ? "1" : "0";
+                hd::js::update();
+                std::cout << "Joystick " << i << ": ";
+                std::string outstr{};
+                for (unsigned int j = 0; j < hd::js::getButtonCount(i); ++j)
+                {
+                    outstr += (hd::js::isButtonPressed(i, j)) ? "1" : "0";
+                }
+                std::cout << outstr << std::endl;
             }
-            std::cout << outstr << std::endl;
         }
+
+        // move cusor back to initial position
+        // GetConsoleScreenBufferInfo(hConsole, &coninfo);
+        // coninfo.dwCursorPosition.Y -= num_sticks; // move up to first line
+        //coninfo.dwCursorPosition.X += 5; // move to the right the length of the word
+        SetConsoleCursorPosition(hConsole, coninfo.dwCursorPosition);
+
+        // quit on ESC keypress
+        if (GetAsyncKeyState(VK_ESCAPE))
+            break;
+
+        std::this_thread::sleep_for(100ms);
     }
+
+    // do
+    // {
+    //     std::cout << '\n'
+    //               << "Press a key to continue...";
+    // } while (std::cin.get() != '\n');
 
     return 0;
 }

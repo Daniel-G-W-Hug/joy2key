@@ -45,34 +45,34 @@ namespace hd
 namespace priv
 {
 
-class JoystickMngr
+class jsMngr
 {
   public:
-    static JoystickMngr &getInstance();
+    static jsMngr &getInstance();
 
-    const JoystickCaps &getCapabilities(unsigned int joystick) const;
+    const jsCaps &getCapabilities(unsigned int jd_idx) const;
 
-    const JoystickState &getState(unsigned int joystick) const;
+    const jsState &getState(unsigned int js_idx) const;
 
-    const Joystick::Identification &getIdentification(unsigned int joystick) const;
+    const js::Id &getId(unsigned int js_idx) const;
 
     void update();
 
   private:
-    JoystickMngr();
-    ~JoystickMngr();
-    JoystickMngr(const JoystickMngr &) = delete;
-    JoystickMngr &operator=(const JoystickMngr &) = delete;
+    jsMngr();
+    ~jsMngr();
+    jsMngr(const jsMngr &) = delete;
+    jsMngr &operator=(const jsMngr &) = delete;
 
-    struct Item
+    struct jsDevice
     {
-        JoystickImpl joystick;                   // Joystick implementation
-        JoystickState state;                     // Current joystick state
-        JoystickCaps capabilities;               // Joystick capabilities
-        Joystick::Identification identification; // Joystick identification
+        jsImpl joystick;       // Joystick implementation
+        jsState state;         // Current joystick state
+        jsCaps capabilities;   // Joystick capabilities
+        js::Id identification; // Joystick identification
     };
 
-    Item m_joysticks[Joystick::Count]; // Joysticks information and state
+    jsDevice m_joysticks[js::max_nJoystick]; // Joysticks information and state
 };
 
 } // namespace priv

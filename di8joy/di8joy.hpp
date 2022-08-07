@@ -46,16 +46,16 @@
 namespace hd
 {
 
-class Joystick
+class js
 {
 
   public:
     enum
     {
-        Count = 8,         // max. number of supported joysticks
-        ButtonCount = 128, // max. number of supported buttons (incl. POV states mapped to buttons)
-        PovCount = 4,      // max. number of supported pov hats
-        AxisCount = 8      // max. number of supported axes
+        max_nJoystick = 8, // max. number of supported joysticks
+        max_nButton = 128, // max. number of supported buttons (incl. POV states mapped to buttons)
+        max_nPOV = 4,      // max. number of supported POV hats
+        max_nAxis = 8      // max. number of supported axes
     };
 
     enum Axis
@@ -70,30 +70,28 @@ class Joystick
         S1  // second slider
     };
 
-    struct Identification
+    struct Id
     {
-        Identification();
-
-        std::wstring name;      // Name of the joystick
-        unsigned int vendorId;  // Manufacturer identifier
-        unsigned int productId; // Product identifier
+        std::wstring name{L"No Joystick"}; // Name of the joystick
+        unsigned int vendorId{0};          // Manufacturer identifier
+        unsigned int productId{0};         // Product identifier
     };
 
-    static bool isConnected(unsigned int joystick);
+    static bool isConnected(unsigned int jsIdx);
 
-    static unsigned int getButtonCount(unsigned int joystick);
+    static unsigned int getButtonCount(unsigned int jsIdx);
 
-    static unsigned int getPovCount(unsigned int joystick);
+    static unsigned int getPovCount(unsigned int jsIdx);
 
-    static bool hasAxis(unsigned int joystick, Axis axis);
+    static bool hasAxis(unsigned int jsIdx, Axis axisIdx);
 
-    static bool isButtonPressed(unsigned int joystick, unsigned int button);
+    static bool isButtonPressed(unsigned int jsIdx, unsigned int buttonIdx);
 
-    static int getPovPosition(unsigned int joystick, unsigned int pov);
+    static int getPovPosition(unsigned int jsIdx, unsigned int povIdx);
 
-    static float getAxisPosition(unsigned int joystick, Axis axis);
+    static float getAxisPosition(unsigned int jsIdx, Axis axisIdx);
 
-    static Identification getIdentification(unsigned int joystick);
+    static js::Id getId(unsigned int jsIdx);
 
     static void update(); // normally used internally.
                           // to be called if you have no window

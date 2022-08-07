@@ -41,77 +41,77 @@ namespace hd
 namespace priv
 {
 
-JoystickMngr &JoystickMngr::getInstance()
+jsMngr &jsMngr::getInstance()
 {
-    static JoystickMngr instance;
+    static jsMngr instance;
     return instance;
 }
 
-const JoystickCaps &JoystickMngr::getCapabilities(unsigned int joystick) const
+const jsCaps &jsMngr::getCapabilities(unsigned int jsIdx) const
 {
-    return m_joysticks[joystick].capabilities;
+    return m_joysticks[jsIdx].capabilities;
 }
 
-const JoystickState &JoystickMngr::getState(unsigned int joystick) const
+const jsState &jsMngr::getState(unsigned int jsIdx) const
 {
-    return m_joysticks[joystick].state;
+    return m_joysticks[jsIdx].state;
 }
 
-const Joystick::Identification &JoystickMngr::getIdentification(unsigned int joystick) const
+const js::Id &jsMngr::getId(unsigned int jsIdx) const
 {
-    return m_joysticks[joystick].identification;
+    return m_joysticks[jsIdx].identification;
 }
 
-void JoystickMngr::update()
+void jsMngr::update()
 {
-    for (unsigned int i = 0; i < Joystick::Count; ++i)
+    for (unsigned int i = 0; i < js::max_nJoystick; ++i)
     {
-        Item &item = m_joysticks[i];
+        jsDevice &device = m_joysticks[i];
 
-        if (item.state.connected)
+        if (device.state.connected)
         {
             // Get the current state of the joystick
-            item.state = item.joystick.update();
+            device.state = device.joystick.update();
 
             // Check if it's still connected
-            if (!item.state.connected)
+            if (!device.state.connected)
             {
-                item.joystick.close();
-                item.capabilities = JoystickCaps();
-                item.state = JoystickState();
-                item.identification = Joystick::Identification();
+                device.joystick.close();
+                device.capabilities = jsCaps();
+                device.state = jsState();
+                device.identification = js::Id();
             }
         }
         else
         {
             // Check if the joystick was connected since last update
-            if (JoystickImpl::isConnected(i))
+            if (jsImpl::isConnected(i))
             {
-                if (item.joystick.open(i))
+                if (device.joystick.open(i))
                 {
-                    item.capabilities = item.joystick.getCapabilities();
-                    item.state = item.joystick.update();
-                    item.identification = item.joystick.getIdentification();
+                    device.capabilities = device.joystick.getCapabilities();
+                    device.state = device.joystick.update();
+                    device.identification = device.joystick.getId();
                 }
             }
         }
     }
 }
 
-JoystickMngr::JoystickMngr()
+jsMngr::jsMngr()
 {
-    JoystickImpl::initialize();
+    jsImpl::initialize();
 }
 
-JoystickMngr::~JoystickMngr()
+jsMngr::~jsMngr()
 {
-    for (Item &item : m_joysticks)
+    for (jsDevice &device : m_joysticks)
     {
-        if (item.state.connected)
-            item.joystick.close();
+        if (device.state.connected)
+            device.joystick.close();
     }
 
-    JoystickImpl::cleanup();
+    jsImpl::cleanup();
 }
 
 } // namespace priv
