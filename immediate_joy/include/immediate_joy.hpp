@@ -1,0 +1,4 @@
+#ifndef IMMEDIATE_JOY_HPP
+#define IMMEDIATE_JOY_HPP
+
+#endif // IMMEDIATE_JOY_HPP

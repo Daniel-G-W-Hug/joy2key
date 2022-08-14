@@ -1,5 +1,5 @@
 #include "di8joy/di8joy.hpp"
-#include "string_trim.hpp"
+#include "hd/hd_string_trim.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -144,12 +144,6 @@ int main()
 
         std::this_thread::sleep_for(100ms);
     }
-
-    // do
-    // {
-    //     std::cout << '\n'
-    //               << "Press a key to continue...";
-    // } while (std::cin.get() != '\n');
 
     return 0;
 }

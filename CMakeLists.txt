@@ -30,3 +30,4 @@ add_subdirectory(di8joy_class)    # simple class for Direct Input 8 for joystick
 add_subdirectory(di8joy)          # Direct Input 8 library for joystick & buttons
 add_subdirectory(joy2cmdl)        # joy2cmdl - inital version for command line output
 add_subdirectory(joy2key)         # joy2key main window
+add_subdirectory(immediate_joy)   # advanced class for Direct Input 8 for joystick & buttons
