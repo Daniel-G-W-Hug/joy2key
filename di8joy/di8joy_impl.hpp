@@ -42,7 +42,6 @@
 // implements the the direct input backend services of the di8joy library
 
 #include "di8joy.hpp"
-#include "di8joy_impl.hpp"
 
 // // for static linking
 // #pragma comment(lib, "dinput8.lib")
@@ -97,7 +96,7 @@ struct jsState
 {
     bool connected{false};           // Is the joystick currently connected?
     float axes[js::max_nAxis]{};     // Position of each axis, in range [-100.f, 100.f]
-    int povs[js::max_nPOV]{};        // Position of each pov hat (-1 for center pos, otherwise in deg starting from top with 0 in counter clockwise direction):
+    int povs[js::max_nPOV]{};        // Position of each pov hat (-1 for center pos, otherwise in deg starting from top with 0 in clockwise direction):
                                      // center: -1, up: 0, U/R: 45, R: 90, D/R: 135, D: 180, D/L: 225, L: 270, U/L: 315
     bool buttons[js::max_nButton]{}; // Status of each button (true = pressed)
 };

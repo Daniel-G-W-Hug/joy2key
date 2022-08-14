@@ -1,0 +1,16 @@
+#include "immediate_joy_impl.hpp"
+
+////////////////////////////////////////////////////////////
+// DirectInput
+////////////////////////////////////////////////////////////
+
+#ifndef DIDFT_OPTIONAL
+#define DIDFT_OPTIONAL 0x80000000
+#endif
+
+namespace hd
+{
+
+    
+
+} // namespace hd
